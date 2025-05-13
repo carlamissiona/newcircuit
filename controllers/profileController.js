@@ -2,6 +2,8 @@ const { getUserById, updateUser } = require('../models/userModel');
 
 // Show profile page
 const showProfile = (req, res) => {
+  console.log("PROFILE ?!!!!");
+  console.log(req.user);
   res.render('profile', {
     title: 'My Profile',
     user: req.user,

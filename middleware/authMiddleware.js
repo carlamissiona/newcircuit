@@ -2,8 +2,11 @@ const jwt = require('jsonwebtoken');
 const { jwtSecret, cookieName } = require('../config/auth');
 const { getUserById } = require('../models/userModel');
 
+
+const { getUserByEmailDB,getUserByIdDB ,createUserDB } = require('../db');
+
 // Check if user is authenticated
-const isAuthenticated = (req, res, next) => {
+  const isAuthenticated = async (req, res, next) => {
   // Get token from cookie
   const token = req.cookies[cookieName];
   
@@ -12,20 +15,28 @@ const isAuthenticated = (req, res, next) => {
     return res.redirect('/login?error=Please log in to access this page');
   }
   
+  console.log("This is cokkie");
+  console.log(token);
   try {
     // Verify token
     const decoded = jwt.verify(token, jwtSecret);
     
     // Check if user exists
-    const user = getUserById(decoded.id);
+    const user = await getUserByIdDB(decoded.id);
     if (!user) {
       res.clearCookie(cookieName);
-      return res.redirect('/login?error=Invalid session, please login again');
+      return res.redirect('/login?error=Invalid session, please login again!');
+    }else{
+
+       console.log("user");
+       console.log( user);
     }
     
+    
     // Attach user to request object (exclude password)
-    const { password, ...userWithoutPassword } = user;
-    req.user = userWithoutPassword;
+    const  { nc_email , nc_password, id } = user;
+    req.user = id;
+    req.email = nc_email;
     
     next();
   } catch (error) {

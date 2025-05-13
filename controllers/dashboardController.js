@@ -22,7 +22,14 @@ const showDashboard = (req, res) => {
     data: dashboardData
   });
 };
+const rendrHome = (req, res) => {
+ 
+  res.render('home', { title: 'Express Auth App', user:req.user });
+};
+
+ 
 
 module.exports = {
-  showDashboard
+  showDashboard,
+  rendrHome
 };

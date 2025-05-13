@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const friendsRoutes = require('./routes/friendsRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 
 const app = express();
@@ -21,17 +22,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/', authRoutes);
-app.use('/dashboard', dashboardRoutes);
-app.use('/profile', profileRoutes);
+app.use('/home', dashboardRoutes);
+app.use('/myprofile', profileRoutes);
+app.use('/friends', friendsRoutes);
 
 // Home route
 app.get('/', (req, res) => {
   res.render('index', { title: 'Express Auth App' });
 });
-
+ 
+ 
 // 404 handler
 app.use((req, res) => {
   res.status(404).render('404', { title: 'Page Not Found' });
 });
+
+
+
+// get friends
+// add friends
+// get friends notif 
 
 module.exports = app;

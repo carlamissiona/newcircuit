@@ -20,42 +20,7 @@ const pool = new Pool({
 });
 
 //postgresql://carlamissiona:yhxjpBia4MA6@ep-round-moon-a1obo7oq-pooler.ap-southeast-1.aws.neon.tech/hvneon?sslmode=require
-
-/*
-
-
-CREATE TABLE public.hvt_users (
-    id serial NOT NULL,
-    hvtu_details_session int8 NULL,
-    hvtu_details_user VARCHAR(1028) NULL,
-    hvtu_password VARCHAR(128) NULL,
-    hvtu_ip VARCHAR(32) NULL,
-    hvtu_visit_last DATE NULL,
-    hvtu_enabled bool NULL,
-    CONSTRAINT users_pkey PRIMARY KEY (id)
-);
-
-CREATE TABLE public.nc_users (
-    id serial NOT NULL,
-    nc_details_session int8 NULL,
-    nc_details_user VARCHAR(1028) NULL,
-    nc_email CHARACTER VARYING(100) NULL,
-    nc_password VARCHAR(128) NULL,
-    nc_ip VARCHAR(32) NULL,
-    nc_visit_last DATE NULL,
-    nc_enabled bool NULL,
-    CONSTRAINT users_pkey PRIMARY KEY (id)
-);
-
-
-
-
-   INSERT INTO users (
-        nc_details_user , nc_email,  nc_password,  
-      ) VALUES ("user details" , "admin@example.com, "pass") RETURNING *,
-
-
-*/
+ 
 
 // User CRUD Operations
 const createUserDB = async (userData) => {
@@ -90,7 +55,10 @@ const getUserByEmailDB = async (email) => {
   
   try {
     const result = await pool.query(query, [email]);
+    console.log("getUserByEmailDB");
+    console.log(result);
     return result.rows[0];
+
   } catch (error) {
     console.log("error");
     console.log(error);
@@ -98,8 +66,19 @@ const getUserByEmailDB = async (email) => {
   }
 };
 
+const gefriendsById = async (id) => {
+  const query = 'SELECT nc_email as user_email, nc_friends as user_friends FROM nc_users WHERE id = $1';
+  
+  try {
+    const result = await pool.query(query, [id]);
+    return result.rows[0];
+  } catch (error) {
+    throw new Error(`Error getting friends by id: ${error.message}`);
+  }
+};
+
 const getUserByIdDB = async (id) => {
-  const query = 'SELECT * FROM users WHERE id = $1';
+  const query = 'SELECT * FROM nc_users WHERE id = $1';
   
   try {
     const result = await pool.query(query, [id]);
@@ -138,7 +117,7 @@ const updateUserDB = async (id, userData) => {
 
   values.push(id);
   const query = `
-    UPDATE users 
+    UPDATE nc_users 
     SET ${updates.join(', ')}, updated_at = NOW()
     WHERE id = $${valueCount}
     RETURNING id, name, email, role, created_at, updated_at
@@ -153,7 +132,7 @@ const updateUserDB = async (id, userData) => {
 };
 
 const deleteUserDB = async (id) => {
-  const query = 'DELETE FROM users WHERE id = $1 RETURNING *';
+  const query = 'DELETE FROM nc_users WHERE id = $1 RETURNING *';
   
   try {
     const result = await pool.query(query, [id]);
@@ -168,6 +147,7 @@ module.exports = {
   createUserDB,
   getUserByEmailDB,
   getUserByIdDB,
+  gefriendsById,
   updateUserDB,
   deleteUserDB
 };

@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { getUserByEmail, createUser, verifyPassword } = require('../models/userModel');
 const { jwtSecret, jwtExpiration, cookieName } = require('../config/auth');
+const bcrypt = require('bcryptjs');
+
 // Import database functions for future use
 const { getUserByEmailDB, createUserDB } = require('../db');
 
@@ -36,10 +38,12 @@ const loginUser = async (req, res) => {
 
   
   // Future implementation with database
+  let user=null;
   try {
-    const user = await getUserByEmailDB(email);
+     user = await getUserByEmailDB(email);
+    console.log("user");
     console.log(user);
-    if (!user) {
+    if (!user || user == null) {
       return res.render('auth/login', {
         title: 'Login',
         error: 'Invalid email or password',
@@ -50,6 +54,8 @@ const loginUser = async (req, res) => {
   
   // Continue with password verification and token generation
   } catch (error) {
+    console.log("eror");
+    console.log(error);
     return res.render('auth/login', {
       title: 'Login',
       error: 'An error occurred during login',
@@ -61,16 +67,11 @@ const loginUser = async (req, res) => {
   // Current implementation with in-memory storage
   //const user = getUserByEmail(email);
   
-  if (!user) {
-    return res.render('auth/login', { 
-      title: 'Login',
-      error: 'Invalid email or password',
-      email
-    });
-  }
+ 
 
   const isPasswordValid = await verifyPassword(password, user.nc_password);
-  
+  console.log("isPasswordValid");
+  console.log(isPasswordValid);
   if (!isPasswordValid) {
     return res.render('auth/login', { 
       title: 'Login',
