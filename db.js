@@ -49,22 +49,85 @@ const createUserDB = async (userData) => {
   }
 };
 
-const getUserByEmailDB = async (email) => {
-  console.log("@ getUserByEmailDB");
-  const query = 'SELECT * FROM nc_users WHERE nc_email = $1';
+
+const postMicro = async (postData) => {
+  const { message,user } = postData;
+  console.log("post micro user");
+  console.log(message);
+  console.log(user);
+  const query = `
+    INSERT INTO nc_textbased(nc_user, nc_blog, nc_date_created) 
+    VALUES ($1, $2, NOW())
+    RETURNING *
+  `;
+    
+  const values = [ user, message];
   
   try {
-    const result = await pool.query(query, [email]);
-    console.log("getUserByEmailDB");
-    console.log(result);
+    
+    const result = await pool.query(query, values);
+    // console.log(" DB results ");
+    // console.log(result);
     return result.rows[0];
 
   } catch (error) {
     console.log("error");
     console.log(error);
+    throw new Error(`Error creating microblog: ${error.message}`);
+  }
+};
+
+
+const getUserByEmailDB = async (email) => {
+  // console.log("@ getUserByEmailDB");
+  const query = 'SELECT * FROM nc_users WHERE nc_email = $1';
+  
+  try {
+    const result = await pool.query(query, [email]);
+    console.log("getUserByEmailDB");
+    // console.log(result);
+    return result.rows[0];
+
+  } catch (error) {
+    // console.log("error");
+    console.log(error);
     throw new Error(`Error getting user by email: ${error.message}`);
   }
 };
+
+
+const getUserSubsByEmail = async (email) => {
+  console.log("@ get articles articles");
+  const query = "SELECT      a.*,      u.nc_email  FROM      nc_articles a JOIN (     SELECT          (unnest(string_to_array(nc_subs, ',')))::bigint AS subwriter_id     FROM          nc_users     WHERE          nc_email = $1 ) AS sub_ids      ON a.nc_subswriter = sub_ids.subwriter_id JOIN nc_users u      ON a.nc_subswriter = u.id; "
+   
+  try {
+    const result = await pool.query(query, [email]);
+    
+    console.log("result.rows[0]");
+    console.log( result.rows);
+    return result.rows;
+
+
+  // idSERIAL
+  // PRIMARY KEY
+  // nc_details_sessionVARCHAR(500)
+  // nc_details_userVARCHAR(1028)
+  // nc_emailVARCHAR(100)
+  // nc_passwordVARCHAR(128)
+  // nc_subsVARCHAR(5000)
+  // nc_friendsCHAR(600)
+  // created_atTIMESTAMP
+  // nc_subsidINTEGER
+
+  } catch (error) {
+    console.log("error");
+    console.log(error);
+    throw new Error(`Error getting user  subs by email: ${error.message}`);
+  }
+};
+
+
+
 
 const gefriendsById = async (id) => {
   const query = 'SELECT nc_email as user_email, nc_friends as user_friends FROM nc_users WHERE id = $1';
@@ -149,5 +212,7 @@ module.exports = {
   getUserByIdDB,
   gefriendsById,
   updateUserDB,
-  deleteUserDB
+  deleteUserDB,
+  postMicro,
+  getUserSubsByEmail,
 };

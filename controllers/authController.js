@@ -36,13 +36,12 @@ const loginUser = async (req, res) => {
     });
   }
 
-  
-  // Future implementation with database
+   
   let user=null;
   try {
-     user = await getUserByEmailDB(email);
-    console.log("user");
-    console.log(user);
+    user = await getUserByEmailDB(email);
+    console.log("userlogin");
+    // console.log(user);
     if (!user || user == null) {
       return res.render('auth/login', {
         title: 'Login',
@@ -88,7 +87,7 @@ const loginUser = async (req, res) => {
     sameSite: 'strict'
   });
 
-  res.redirect('/dashboard');
+  res.redirect('/home');
 };
 
 // Register user

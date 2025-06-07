@@ -23,6 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/', authRoutes);
 app.use('/home', dashboardRoutes);
+
+app.use('/micro', dashboardRoutes);
 app.use('/myprofile', profileRoutes);
 app.use('/friends', friendsRoutes);
 
