@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {   post_friends, get_frsearch  } = require('../controllers/dashboardController'); 
+const {   post_subs  } = require('../controllers/dashboardController'); 
 const { isAuthenticated, setCurrentUser } = require('../middleware/authMiddleware');
 
 
@@ -9,9 +9,8 @@ router.use(setCurrentUser);
 
 // Search route
  
-router.get('/', get_frsearch); 
 
-router.post('/add', post_friends); 
+router.post('/subs', post_subs); 
 
  
 module.exports = router;

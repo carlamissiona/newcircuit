@@ -87,7 +87,7 @@ const loginUser = async (req, res) => {
     sameSite: 'strict'
   });
 
-  res.redirect('/home');
+  res.redirect('/app');
 };
 
 // Register user

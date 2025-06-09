@@ -4,6 +4,8 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const searchRoutes = require('./routes/searchRoutes');
+const channelsRoutes = require('./routes/channelsRoutes');
 const friendsRoutes = require('./routes/friendsRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 
@@ -20,13 +22,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 // Routes
 app.use('/', authRoutes);
-app.use('/home', dashboardRoutes);
+app.use('/app', dashboardRoutes);
+app.use('/search', searchRoutes);
+app.use('/channels', channelsRoutes);
 
-app.use('/micro', dashboardRoutes);
-app.use('/myprofile', profileRoutes);
+app.use('/micro', dashboardRoutes); 
 app.use('/friends', friendsRoutes);
+app.use('/myprofile', profileRoutes);
 
 // Home route
 app.get('/', (req, res) => {

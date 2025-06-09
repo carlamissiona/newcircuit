@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { showDashboard,rendrHome,post_microblog  } = require('../controllers/dashboardController'); 
+const { showDashboard,rendrHome, get_search, post_microblog  } = require('../controllers/dashboardController'); 
 const { isAuthenticated, setCurrentUser } = require('../middleware/authMiddleware');
 
 
@@ -11,6 +11,9 @@ router.use(setCurrentUser);
 router.get('/', rendrHome);
 
 router.post('/micro', post_microblog); 
+
+ 
+
 
 // router.get('/onboarding', rendrOnboard);
 // router.get('/beta-trial', rendrBeta);

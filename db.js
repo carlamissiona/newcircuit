@@ -77,6 +77,68 @@ const postMicro = async (postData) => {
   }
 };
 
+const postUsersubs = async (post_data) => {
+
+  const { email, val } = post_data;
+  const query = "UPDATE nc_users SET nc_subs = COALESCE(nc_subs, '') || ',' || $1 WHERE nc_email = $2 RETURNING *;"; 
+  const values = [ val, email ];
+
+  try {  
+    
+    const result2 = await pool.query(query, values);  
+
+  }catch (error) { 
+
+      console.log("Error @subs db" , error);  
+      throw new Error(`Error creating subs: ${error.message}`); 
+  }
+ 
+  console.log("id");
+
+  // try {  const result2 = await pool.query(query, values);
+  // const update = `
+  //   UPDATE nc_user
+  //   SET nc_subs = COALESCE(nc_subs, '') || ', ' || $2
+  //   WHERE nc_email = $1
+  //   RETURNING *;
+
+  // `;
+     
+  
+ 
+};
+
+const postUserfriends = async (post_data) => {
+
+  const { fremail, val } = post_data;
+  const query = "UPDATE nc_users SET nc_friends = COALESCE(nc_friends, '') || ',' || $1 WHERE nc_email = $2 RETURNING *;"; 
+  const values = [ val, fremail ];
+
+  try {  
+    
+    const result = await pool.query(query, values);  
+    console.log("result");
+    console.log(result);
+  }catch (error) { 
+
+    console.log("Error @subs db" , error);  
+    throw new Error(`Error creating subs: ${error.message}`); 
+  }
+ 
+  console.log("id");
+
+  // try {  const result2 = await pool.query(query, values);
+  // const update = `
+  //   UPDATE nc_user
+  //   SET nc_subs = COALESCE(nc_subs, '') || ', ' || $2
+  //   WHERE nc_email = $1
+  //   RETURNING *;
+
+  // `;
+     
+  
+ 
+};
 
 const getUserByEmailDB = async (email) => {
   // console.log("@ getUserByEmailDB");
@@ -106,18 +168,7 @@ const getUserSubsByEmail = async (email) => {
     console.log("result.rows[0]");
     console.log( result.rows);
     return result.rows;
-
-
-  // idSERIAL
-  // PRIMARY KEY
-  // nc_details_sessionVARCHAR(500)
-  // nc_details_userVARCHAR(1028)
-  // nc_emailVARCHAR(100)
-  // nc_passwordVARCHAR(128)
-  // nc_subsVARCHAR(5000)
-  // nc_friendsCHAR(600)
-  // created_atTIMESTAMP
-  // nc_subsidINTEGER
+ 
 
   } catch (error) {
     console.log("error");
@@ -134,7 +185,7 @@ const gefriendsById = async (id) => {
   
   try {
     const result = await pool.query(query, [id]);
-    return result.rows[0];
+    return result.rows;
   } catch (error) {
     throw new Error(`Error getting friends by id: ${error.message}`);
   }
@@ -205,6 +256,27 @@ const deleteUserDB = async (id) => {
   }
 };
 
+const getSearchedchannels = async (id) => {
+
+  console.log("@ get articles articles");
+  const query = "SELECT   *  FROM   nc_users where  nc_userdetails = '%Channel:%$1%' ";
+  
+  try {
+    const result = await pool.query(query, [email]);
+    
+    console.log("result.rows[0]");
+    console.log(result.rows);
+    return result.rows; 
+
+  } catch (error) {
+    console.log("error");
+    console.log(error);
+    throw new Error(`Error getting user  subs by email: ${error.message}`);
+  }
+
+
+};
+
 module.exports = {
   pool,
   createUserDB,
@@ -214,5 +286,8 @@ module.exports = {
   updateUserDB,
   deleteUserDB,
   postMicro,
+  postUsersubs,
+  postUserfriends,
   getUserSubsByEmail,
+  getSearchedchannels,
 };
